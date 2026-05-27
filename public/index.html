@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Ping Pong</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🏓 Online Ping Pong</h1>
+        
+        <div class="game-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+
+        <div class="info-panel">
+            <div class="status" id="status">Waiting for players...</div>
+            <div class="scores">
+                <div class="score-board">
+                    <div class="player-label">Player 1</div>
+                    <div class="score" id="score1">0</div>
+                </div>
+                <div class="divider">vs</div>
+                <div class="score-board">
+                    <div class="player-label">Player 2</div>
+                    <div class="score" id="score2">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="room-input">
+                <input type="text" id="roomId" placeholder="Enter room ID (optional)" value="default">
+                <button id="joinBtn" onclick="joinGame()">Join Game</button>
+            </div>
+            <button id="resetBtn" onclick="resetGame()" style="display:none;">Reset Game</button>
+        </div>
+
+        <div class="instructions">
+            <h3>How to Play:</h3>
+            <ul>
+                <li>Enter a room ID to join an online game (same ID for both players)</li>
+                <li>Use <strong>W/S</strong> keys or <strong>Arrow Up/Down</strong> to move your paddle</li>
+                <li>First player to score will appear above</li>
+                <li>Click Reset Game to start a new match</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
