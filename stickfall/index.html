@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stickfall: Last Stand</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="gameContainer" class="game-container">
+        <!-- Main Menu -->
+        <div id="mainMenu" class="screen active">
+            <div class="menu-content">
+                <h1 class="title">STICKFALL</h1>
+                <p class="subtitle">Last Stand</p>
+                <button class="btn btn-primary" onclick="startGame()">NEW RUN</button>
+                <button class="btn btn-secondary" onclick="openSkillTree()">SKILL TREE</button>
+                <button class="btn btn-secondary" onclick="openWorkshop()">WORKSHOP</button>
+                <button class="btn btn-secondary" onclick="openStats()">STATS</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen">
+            <div class="hud">
+                <div class="hud-left">
+                    <div class="wave-info">
+                        <span class="label">WAVE</span>
+                        <span id="waveNumber" class="value">1</span>
+                    </div>
+                    <div class="health-bar">
+                        <div id="playerHealth" class="health-fill"></div>
+                    </div>
+                    <div class="health-text"><span id="healthText">100/100</span></div>
+                </div>
+                <div class="hud-center">
+                    <div id="enemyCount" class="enemy-count">Enemies: 0</div>
+                </div>
+                <div class="hud-right">
+                    <div class="currency">
+                        <span class="coin-icon">🪙</span>
+                        <span id="coins">0</span>
+                    </div>
+                    <div class="currency">
+                        <span class="scrap-icon">⚙️</span>
+                        <span id="scrap">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <canvas id="gameCanvas" class="game-canvas"></canvas>
+
+            <!-- Controls -->
+            <div class="controls">
+                <div class="joystick-container">
+                    <div id="leftJoystick" class="joystick">
+                        <div class="joystick-thumb"></div>
+                    </div>
+                    <span>MOVE</span>
+                </div>
+                <div class="action-buttons">
+                    <button id="attackBtn" class="action-btn attack-btn" ontouchstart="handleAttack()" ontouchend="handleAttackEnd()">ATTACK</button>
+                    <button id="dashBtn" class="action-btn dash-btn" ontouchstart="handleDash()">DASH</button>
+                    <button id="abilityBtn" class="action-btn ability-btn" ontouchstart="handleAbility()">ABILITY</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wave Complete Screen -->
+        <div id="waveCompleteScreen" class="screen">
+            <div class="wave-complete-content">
+                <h2>WAVE COMPLETE</h2>
+                <div class="rewards">
+                    <div class="reward-item">
+                        <span class="reward-icon">🪙</span>
+                        <span id="waveCoinsReward">0</span>
+                    </div>
+                    <div class="reward-item">
+                        <span class="reward-icon">⚙️</span>
+                        <span id="waveScrapReward">0</span>
+                    </div>
+                </div>
+                <h3>Choose Your Upgrade</h3>
+                <div id="upgradesContainer" class="upgrades-grid"></div>
+            </div>
+        </div>
+
+        <!-- Shop Screen -->
+        <div id="shopScreen" class="screen">
+            <div class="shop-content">
+                <h2>WEAPON SHOP</h2>
+                <div id="shopItems" class="shop-grid"></div>
+                <button class="btn btn-primary" onclick="nextWave()">READY FOR BATTLE</button>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="screen">
+            <div class="game-over-content">
+                <h2 id="gameOverTitle">DEFEATED</h2>
+                <div class="game-over-stats">
+                    <div class="stat-row">
+                        <span>Waves Survived:</span>
+                        <span id="wavesSurvived">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Enemies Defeated:</span>
+                        <span id="enemiesDefeated">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Total Coins:</span>
+                        <span id="totalCoins">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Total Scrap:</span>
+                        <span id="totalScrap">0</span>
+                    </div>
+                </div>
+                <div class="game-over-buttons">
+                    <button class="btn btn-primary" onclick="returnToMenu()">MAIN MENU</button>
+                    <button class="btn btn-secondary" onclick="startGame()">TRY AGAIN</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skill Tree -->
+        <div id="skillTreeScreen" class="screen">
+            <div class="skill-tree-content">
+                <h2>SKILL TREE</h2>
+                <div class="skills-grid">
+                    <div class="skill-card" onclick="upgradeSkill('health')">
+                        <span class="skill-icon">❤️</span>
+                        <span class="skill-name">Health</span>
+                        <span class="skill-level" id="healthLevel">Lv. 1</span>
+                    </div>
+                    <div class="skill-card" onclick="upgradeSkill('damage')">
+                        <span class="skill-icon">⚔️</span>
+                        <span class="skill-name">Damage</span>
+                        <span class="skill-level" id="damageLevel">Lv. 1</span>
+                    </div>
+                    <div class="skill-card" onclick="upgradeSkill('luck')">
+                        <span class="skill-icon">🍀</span>
+                        <span class="skill-name">Luck</span>
+                        <span class="skill-level" id="luckLevel">Lv. 1</span>
+                    </div>
+                    <div class="skill-card" onclick="upgradeSkill('crit')">
+                        <span class="skill-icon">💥</span>
+                        <span class="skill-name">Crit Chance</span>
+                        <span class="skill-level" id="critLevel">Lv. 1</span>
+                    </div>
+                    <div class="skill-card" onclick="upgradeSkill('coinGain')">
+                        <span class="skill-icon">💰</span>
+                        <span class="skill-name">Coin Gain</span>
+                        <span class="skill-level" id="coinGainLevel">Lv. 1</span>
+                    </div>
+                    <div class="skill-card" onclick="upgradeSkill('droneCapacity')">
+                        <span class="skill-icon">🤖</span>
+                        <span class="skill-name">Drone Capacity</span>
+                        <span class="skill-level" id="droneCapacityLevel">Lv. 1</span>
+                    </div>
+                </div>
+                <div class="skill-points">Scrap Available: <span id="scrapAvailable">0</span></div>
+                <button class="btn btn-primary" onclick="backToMenu()">BACK</button>
+            </div>
+        </div>
+
+        <!-- Workshop -->
+        <div id="workshopScreen" class="screen">
+            <div class="workshop-content">
+                <h2>WORKSHOP</h2>
+                <div class="workshop-grid" id="workshopGrid"></div>
+                <button class="btn btn-primary" onclick="backToMenu()">BACK</button>
+            </div>
+        </div>
+
+        <!-- Stats Screen -->
+        <div id="statsScreen" class="screen">
+            <div class="stats-content">
+                <h2>STATISTICS</h2>
+                <div class="stats-grid" id="statsGrid"></div>
+                <button class="btn btn-primary" onclick="backToMenu()">BACK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
